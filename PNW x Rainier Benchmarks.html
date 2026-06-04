@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNW x Rainier — Campaign Benchmarks</title>
+<style>
+  :root {
+    --green:   #2D6A4F;
+    --green-l: #40916C;
+    --green-xl:#D8F3DC;
+    --blue:    #1877F2;
+    --blue-l:  #E7F3FF;
+    --gold:    #B7791F;
+    --gold-l:  #FEF3C7;
+    --bg:      #F6F7F5;
+    --card:    #FFFFFF;
+    --border:  #E2E8E0;
+    --text:    #1A1A1A;
+    --muted:   #6B7280;
+    --sale-bg: #FFF7ED;
+    --sale-border: #F59E0B;
+    --purple:  #6D28D9;
+    --purple-l:#EDE9FE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .header { background: var(--green); padding: 28px 40px 24px; }
+  .header-inner { max-width: 1200px; margin: 0 auto; }
+  .header h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p  { color: rgba(255,255,255,0.72); font-size: 13px; margin-top: 4px; }
+
+  /* ── TABS ── */
+  .tabs-wrap { background: var(--green); border-top: 1px solid rgba(255,255,255,0.15); }
+  .tabs { max-width: 1200px; margin: 0 auto; display: flex; padding: 0 40px; gap: 2px; }
+  .tab {
+    padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+    color: rgba(255,255,255,0.65); border-bottom: 3px solid transparent;
+    transition: all .15s; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .tab:hover { color: #fff; }
+  .tab.active { color: #fff; border-bottom-color: #74C69D; }
+  .tab.avg-tab { margin-left: auto; background: rgba(255,255,255,0.1); border-radius: 6px 6px 0 0; color: rgba(255,255,255,0.85); }
+  .tab.avg-tab.active { background: rgba(255,255,255,0.2); color: #fff; }
+
+  /* ── MAIN ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 32px 40px 60px; }
+
+  /* ── SALE NOTICE ── */
+  .notice {
+    background: var(--sale-bg); border: 1px solid var(--sale-border);
+    border-radius: 8px; padding: 10px 16px; margin-bottom: 24px;
+    font-size: 12.5px; color: #92400E; display: none; align-items: center; gap: 8px;
+  }
+  .notice.visible { display: flex; }
+  .notice span.icon { font-size: 15px; }
+
+  /* ── CHANNEL BLOCK ── */
+  .channel { margin-bottom: 36px; }
+  .channel-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border);
+  }
+  .channel-badge {
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .badge-google { background: var(--green-xl); color: var(--green); }
+  .badge-meta   { background: var(--blue-l);   color: var(--blue);  }
+  .channel-title { font-size: 17px; font-weight: 700; }
+  .channel-spend { margin-left: auto; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .channel-spend strong { color: var(--text); font-size: 15px; font-weight: 700; }
+
+  /* ── METRIC GRID ── */
+  .metrics { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  @media (max-width: 900px) { .metrics { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 500px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+
+  .metric-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 16px 14px; transition: box-shadow .15s;
+  }
+  .metric-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.07); }
+  .metric-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+  .metric-value { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1; }
+  .metric-sub   { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* color accents by metric */
+  .m-roas    .metric-value { color: var(--green);  }
+  .m-cpr     .metric-value { color: var(--gold);   }
+  .m-revenue .metric-value { color: var(--green);  }
+  .m-mer     .metric-value { color: var(--purple); }
+
+  /* ── BUSINESS PERF BLOCK ── */
+  .biz-block { margin-bottom: 32px; }
+  .biz-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border);
+  }
+  .badge-biz { background: var(--purple-l); color: var(--purple); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+  .biz-title { font-size: 17px; font-weight: 700; }
+  .biz-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 420px; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  /* ── FOOTER NOTE ── */
+  .footnote { font-size: 11.5px; color: var(--muted); margin-top: 24px; line-height: 1.6; }
+  .footnote strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>PNW x Rainier — Campaign Benchmarks</h1>
+    <p>Google Ads &amp; Meta &nbsp;·&nbsp; <strong style="color:#74C69D;">May 7, 2025 – October 6, 2025</strong> &nbsp;·&nbsp; Strategy Labs</p>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar"></div>
+</div>
+
+<div class="main">
+  <div class="notice" id="saleNotice">
+    <span class="icon">🏷️</span>
+    <span>Rainier collab sale launched in <strong>September</strong>. Collaboration ended <strong>October 6</strong> — October data reflects the first 6 days of the month.</span>
+  </div>
+
+  <div id="content"></div>
+
+  <p class="footnote">
+    <strong>Google Ads:</strong> Aggregated across all active PMax &amp; Search campaigns. ROAS derived from conversion value ÷ spend. CVR = conversions ÷ clicks.<br>
+    <strong>Meta:</strong> Aggregated across all purchase-optimized campaigns; awareness campaign excluded. CPR based on campaigns with tracked purchase results. CVR = results ÷ estimated link clicks.<br>
+    <strong>Oct note:</strong> Collab ended Oct 6 — Google full-month data included for reference; Meta spend reflects all active campaigns through Oct 31.
+  </p>
+</div>
+
+<script>
+const MONTHS = ['May','Jun','Jul','Aug','Sep','Oct'];
+
+const BIZ = {
+  monthly: {
+    May: { revenue: 144310, mer: 25.9 },
+    Jun: { revenue: 108075, mer: 19.1 },
+    Jul: { revenue: 167486, mer: 16.7 },
+    Aug: { revenue: 106447, mer: 23.2 },
+    Sep: { revenue:  93650, mer: 23.3 },
+    Oct: { revenue:  39767, mer: 34.6 },
+  },
+  avg: { revenue: 109955.83, mer: 23.8 },
+};
+
+const DATA = {
+  google: {
+    monthly: {
+      May: { spend:6716.69,  cpc:1.07, cpm:15.68, ctr:1.46, roas:3.76, cpr:20.40, cvr:5.25 },
+      Jun: { spend:4507.92,  cpc:1.01, cpm:19.21, ctr:1.91, roas:5.11, cpr:16.49, cvr:6.10 },
+      Jul: { spend:4679.26,  cpc:0.87, cpm:18.28, ctr:2.11, roas:4.66, cpr:18.03, cvr:4.81 },
+      Aug: { spend:4414.82,  cpc:0.76, cpm:14.83, ctr:1.96, roas:4.48, cpr:14.57, cvr:5.19 },
+      Sep: { spend:5598.07,  cpc:0.57, cpm:14.34, ctr:2.53, roas:2.55, cpr:22.63, cvr:2.50 },
+      Oct: { spend:4991.50,  cpc:0.76, cpm:18.41, ctr:2.43, roas:2.72, cpr:25.80, cvr:2.94 },
+    },
+    avg:   { spend:30908.26, cpc:0.84, cpm:16.79, ctr:2.07, roas:3.88, cpr:19.65, cvr:4.47 },
+  },
+  meta: {
+    monthly: {
+      May: { spend:26663.61, cpc:1.06, cpm:8.80, ctr:0.83, roas:3.32, cpr:28.73, cvr:3.37 },
+      Jun: { spend:13808.70, cpc:1.31, cpm:9.02, ctr:0.69, roas:4.52, cpr:31.53, cvr:4.27 },
+      Jul: { spend:21066.37, cpc:1.08, cpm:7.95, ctr:0.74, roas:6.61, cpr:36.89, cvr:3.49 },
+      Aug: { spend:17762.48, cpc:1.18, cpm:9.48, ctr:0.80, roas:3.98, cpr:42.49, cvr:3.15 },
+      Sep: { spend:13777.07, cpc:0.56, cpm:7.32, ctr:1.30, roas:4.08, cpr:19.16, cvr:3.42 },
+      Oct: { spend:8205.99,  cpc:0.77, cpm:8.44, ctr:1.10, roas:6.28, cpr:61.24, cvr:2.12 },
+    },
+    avg:   { spend:101284.22, cpc:0.99, cpm:8.50, ctr:0.91, roas:4.80, cpr:36.67, cvr:3.30 },
+  }
+};
+
+const fmt = {
+  spend:   v => '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+  revenue: v => '$' + v.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0}),
+  mer:     v => v.toFixed(1) + '%',
+  cpc:     v => '$' + v.toFixed(2),
+  cpm:     v => '$' + v.toFixed(2),
+  ctr:     v => v.toFixed(2) + '%',
+  roas:    v => v.toFixed(2) + 'x',
+  cpr:     v => '$' + v.toFixed(2),
+  cvr:     v => v.toFixed(2) + '%',
+};
+
+const METRICS = [
+  { key:'cpc',  label:'CPC',   sub:'Cost per click',      cls:'m-cpc'  },
+  { key:'cpm',  label:'CPM',   sub:'Cost per 1K impr.',   cls:'m-cpm'  },
+  { key:'ctr',  label:'CTR',   sub:'Click-through rate',  cls:'m-ctr'  },
+  { key:'roas', label:'ROAS',  sub:'Return on ad spend',  cls:'m-roas' },
+  { key:'cpr',  label:'CPR',   sub:'Cost per result',     cls:'m-cpr'  },
+  { key:'cvr',  label:'CVR',   sub:'Conversion rate',     cls:'m-cvr'  },
+];
+
+let activeTab = 'May';
+
+function buildTabs() {
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = '';
+  MONTHS.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (m === activeTab ? ' active' : '');
+    btn.textContent = m;
+    btn.onclick = () => { activeTab = m; render(); };
+    bar.appendChild(btn);
+  });
+  const avg = document.createElement('button');
+  avg.className = 'tab avg-tab' + (activeTab === 'avg' ? ' active' : '');
+  avg.textContent = 'Overall Avg';
+  avg.onclick = () => { activeTab = 'avg'; render(); };
+  bar.appendChild(avg);
+}
+
+function bizBlock(bd) {
+  return `
+    <div class="biz-block">
+      <div class="biz-header">
+        <span class="badge-biz">Business</span>
+        <span class="biz-title">Overall Performance</span>
+      </div>
+      <div class="biz-metrics">
+        <div class="metric-card m-revenue">
+          <div class="metric-label">Website Revenue</div>
+          <div class="metric-value">${fmt.revenue(bd.revenue)}</div>
+          <div class="metric-sub">Total website revenue</div>
+        </div>
+        <div class="metric-card m-mer">
+          <div class="metric-label">MER</div>
+          <div class="metric-value">${fmt.mer(bd.mer)}</div>
+          <div class="metric-sub">Marketing efficiency ratio</div>
+        </div>
+      </div>
+    </div>
+    <hr class="divider">`;
+}
+
+function channelBlock(channel, label, badgeCls, d) {
+  const metrics = METRICS.map(m => `
+    <div class="metric-card ${m.cls}">
+      <div class="metric-label">${m.label}</div>
+      <div class="metric-value">${fmt[m.key](d[m.key])}</div>
+      <div class="metric-sub">${m.sub}</div>
+    </div>`).join('');
+
+  return `
+    <div class="channel">
+      <div class="channel-header">
+        <span class="channel-badge ${badgeCls}">${label}</span>
+        <span class="channel-title">${label === 'Google Ads' ? 'Google Ads' : 'Meta Ads'}</span>
+        <span class="channel-spend">Total Spend: <strong>${fmt.spend(d.spend)}</strong></span>
+      </div>
+      <div class="metrics">${metrics}</div>
+    </div>`;
+}
+
+function render() {
+  buildTabs();
+  const isAvg = activeTab === 'avg';
+  const gd = isAvg ? DATA.google.avg : DATA.google.monthly[activeTab];
+  const md = isAvg ? DATA.meta.avg   : DATA.meta.monthly[activeTab];
+  const bd = isAvg ? BIZ.avg         : BIZ.monthly[activeTab];
+
+  const notice = document.getElementById('saleNotice');
+  notice.classList.toggle('visible', activeTab === 'Sep' || activeTab === 'Oct' || isAvg);
+
+  const content = document.getElementById('content');
+  content.innerHTML =
+    bizBlock(bd) +
+    channelBlock('google', 'Google Ads', 'badge-google', gd) +
+    '<hr class="divider">' +
+    channelBlock('meta',   'Meta Ads',   'badge-meta',   md);
+}
+
+render();
+</script>
+</body>
+</html>
